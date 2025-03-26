@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -24,20 +25,28 @@ type SwiftCode struct {
 var db *sql.DB
 
 // init the database
-func initDB(host, user, password, dbname, port string) {
+func initDB(host, user, password, dbname, port string) (*sql.DB, error) {
 	connStr := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 		host, user, password, dbname, port)
 
 	var err error
-	db, err = sql.Open("postgres", connStr)
-	if err != nil {
-		log.Fatal("Error opening database connection: ", err)
+
+	// Retry connection for 30 seconds
+	maxAttempts := 30
+	for i := 0; i < maxAttempts; i++ {
+		db, err = sql.Open("postgres", connStr)
+		if err == nil {
+			err = db.Ping()
+			if err == nil {
+				return db, nil
+			}
+		}
+
+		log.Printf("Attempt %d: Database not ready yet. Retrying...", i+1)
+		time.Sleep(1 * time.Second)
 	}
 
-	// Check the connection
-	if err := db.Ping(); err != nil {
-		log.Fatal("Error connecting to the database: ", err)
-	}
+	return nil, fmt.Errorf("failed to connect to database after %d attempts: %v", maxAttempts, err)
 }
 
 // create the table
