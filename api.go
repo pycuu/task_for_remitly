@@ -82,20 +82,35 @@ func getSwiftCodesByCountry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := CountrySwiftCodesResponse{
+	response := struct {
+		CountryISO2 string `json:"countryISO2"`
+		CountryName string `json:"countryName"`
+		SwiftCodes  []struct {
+			SwiftCode     string `json:"swiftCode"`
+			CountryISO2   string `json:"countryISO2"`
+			IsHeadquarter bool   `json:"isHeadquarter"`
+			Address       string `json:"address"`
+			BankName      string `json:"bankName"`
+		} `json:"swiftCodes"`
+	}{
 		CountryISO2: swiftCodes[0].CountryCode,
 		CountryName: swiftCodes[0].CountryName,
-		SwiftCodes:  make([]SwiftCodeResponse, len(swiftCodes)),
 	}
 
-	for i, sc := range swiftCodes {
-		response.SwiftCodes[i] = SwiftCodeResponse{
-			Address:       sc.Address,
-			BankName:      sc.BankName,
+	for _, sc := range swiftCodes {
+		response.SwiftCodes = append(response.SwiftCodes, struct {
+			SwiftCode     string `json:"swiftCode"`
+			CountryISO2   string `json:"countryISO2"`
+			IsHeadquarter bool   `json:"isHeadquarter"`
+			Address       string `json:"address"`
+			BankName      string `json:"bankName"`
+		}{
+			SwiftCode:     sc.SwiftCode,
 			CountryISO2:   sc.CountryCode,
 			IsHeadquarter: sc.IsHeadquarter,
-			SwiftCode:     sc.SwiftCode,
-		}
+			Address:       sc.Address,
+			BankName:      sc.BankName,
+		})
 	}
 
 	w.Header().Set("Content-Type", "application/json")

@@ -136,12 +136,21 @@ func GetSwiftCodeDetails(swiftCode string) (SwiftCode, error) {
 		return SwiftCode{}, err
 	}
 
-	// handle nulls
-	if address.Valid {
+	// handle nulls and empty values
+	if address.Valid && address.String != "  " {
 		sc.Address = address.String
 	} else {
 		sc.Address = "N/A"
 	}
+
+	if bankName.Valid {
+		sc.BankName = bankName.String
+	} else {
+		sc.BankName = "N/A"
+	}
+
+	//fmt.Println("adress: " + address.String)
+	//fmt.Println("bank name: " + bankName.String)
 
 	return sc, nil
 }
