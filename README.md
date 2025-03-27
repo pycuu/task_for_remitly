@@ -1,19 +1,21 @@
 # Go API with PostgreSQL
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/yourusername/your-repo)](https://goreportcard.com/report/github.com/yourusername/your-repo)
-
 A clean Go API with PostgreSQL database using Docker.
 
-## Features
-- Feature 1
-- Feature 2
+## Prerequisites
+
+Before running the application, ensure you have the following installed:
+
+    -Docker (Make sure Docker is running)
+    -Docker Compose
+    -Git
 
 ## Quick Start
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/your-repo.git
-cd your-repo
+git clone https://github.com/pycuu/task_for_remitly.git
+cd task_for_remitly
 
 # Start the application
 docker-compose up --build
